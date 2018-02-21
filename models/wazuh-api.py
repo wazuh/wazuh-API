@@ -31,6 +31,7 @@ try:
     import wazuh.rootcheck as rootcheck
     import wazuh.syscheck as syscheck
     import wazuh.syscollector as syscollector
+    import wazuh.cluster.distributed_api as dapi
 except ImportError as e:
     error = str(e)
     error_wazuh_package = -1
@@ -219,7 +220,7 @@ if __name__ == "__main__":
             '/cluster/nodes': cluster.get_nodes,
             '/cluster/node': cluster.get_node,
             '/cluster/files': cluster.get_file_status_json,
-            '/cluster/agents': cluster.get_agent_status_json,
+            '/cluster/agents': Agent.get_agent_status_json_cluster,
             '/cluster/status': cluster.get_status_json,
             '/cluster/config': cluster.read_config,
 
@@ -253,10 +254,9 @@ if __name__ == "__main__":
             print_json(sorted(functions.keys()))
             exit(0)
 
-        if 'arguments' in request and request['arguments']:
-            data = functions[request['function']](**request['arguments'])
-        else:
-            data = functions[request['function']]()
+        arguments = request['arguments'] if 'arguments' in request and request['arguments'] else {}
+        data = dapi.received_request(kwargs=arguments, request_function=functions[request['function']],
+                                     request_type=request['function'])
 
         print_json(data)
     except WazuhException as e:
