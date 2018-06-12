@@ -31,6 +31,7 @@ try:
     import wazuh.rootcheck as rootcheck
     import wazuh.syscheck as syscheck
     import wazuh.syscollector as syscollector
+    import wazuh.ciscat as ciscat
 except (ImportError, SyntaxError) as e:
     error = str(e)
     error_wazuh_package = -1
@@ -254,7 +255,11 @@ if __name__ == "__main__":
             '/syscollector/:agent_id/packages': syscollector.get_packages_agent,
             '/syscollector/os': syscollector.get_os,
             '/syscollector/hardware': syscollector.get_hardware,
-            '/syscollector/packages': syscollector.get_packages
+            '/syscollector/packages': syscollector.get_packages,
+
+            # Cis-cat
+            '/ciscat/results': ciscat.get_results,
+            '/ciscat/:agent_id/results': ciscat.get_results_agent
 
         }
 
