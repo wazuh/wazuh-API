@@ -206,6 +206,7 @@ if __name__ == "__main__":
             '/agents/groups/:group_id/files':Agent.get_group_files,
             '/agents/groups/:group_id/files/:filename':configuration.get_file_conf,
             'PUT/agents/:agent_id/group/:group_id': Agent.set_group,
+            'PUT/agents/:agent_id/add_group/:group_id': Agent.add_group_to_agent,
             'PUT/agents/groups/:group_id': Agent.create_group,
             'DELETE/agents/groups/:group_id':Agent.remove_group,
             'DELETE/agents/:agent_id/group':Agent.unset_group,

@@ -830,6 +830,35 @@ router.put('/:agent_id/group/:group_id', function(req, res) {
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
 
+/**
+ * @api {put} /agents/:agent_id/add_group/:group_id Add agent group
+ * @apiName PutGroupAgent
+ * @apiGroup Groups
+ *
+ * @apiParam {Number} agent_id Agent unique ID.
+ * @apiParam {String} group_id Group ID.
+ *
+ * @apiDescription Adds an agent to the specified group.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X PUT "https://127.0.0.1:55000/agents/004/add_group/webserver?pretty"
+ *
+ */
+router.put('/:agent_id/add_group/:group_id', function(req, res) {
+    logger.debug(req.connection.remoteAddress + " PUT /agents/:agent_id/add_group/:group_id");
+
+    var data_request = {'function': 'PUT/agents/:agent_id/add_group/:group_id', 'arguments': {}};
+    var filters = {'agent_id':'numbers', 'group_id':'names'};
+
+    if (!filter.check(req.params, filters, req, res))  // Filter with error
+        return;
+
+    data_request['arguments']['agent_id'] = req.params.agent_id;
+    data_request['arguments']['group_id'] = req.params.group_id;
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
 
 /**
  * @api {delete} /agents/groups Delete a list of groups

@@ -860,6 +860,57 @@ describe('Agents', function() {
 
     });  // PUT/agents/:agent_id/group/:group_id
 
+    describe('PUT/agents/:agent_id/add_group/:group_id', function() {
+
+        it('Request', function(done) {
+
+            request(common.url)
+            .put("/agents/001/add_group/webserver")
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                done();
+            });
+        });
+
+        it('Params: Bad agent name', function(done) {
+            request(common.url)
+            .put("/agents/001!/add_group/webserver")
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(400)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'message']);
+                res.body.error.should.equal(600);
+                done();
+            });
+        });
+
+        it('Params: Agent does not exist', function(done) {
+            request(common.url)
+            .put("/agents/1568/add_group/webserver")
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'message']);
+                res.body.error.should.equal(1701);
+                done();
+            });
+        });
+
+    });  // PUT/agents/:agent_id/add_group/:group_id
+
     describe('PUT/agents/groups/:group_id', function() {
 
         after(function(done) {
