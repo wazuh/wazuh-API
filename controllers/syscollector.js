@@ -558,4 +558,135 @@ router.get('/:agent_id/netiface', function (req, res) {
 })
 
 
+/**
+ * @api {get} /syscollector/:agent_id/network Get network interface info of an agent
+ * @apiName GetNetwork
+ * @apiGroup Network
+ *
+ * @apiParam {Number} [offset] First element to return in the collection.
+ * @apiParam {Number} [limit=500] Maximum number of elements to return.
+ * @apiParam {String} [sort] Sorts the collection by a field or fields (separated by comma). Use +/- at the beginning to list in ascending or descending order.
+ * @apiParam {String} [select] List of selected fields.
+ * @apiParam {String} [id] Filters by id.
+ * @apiParam {String} [scan_id] Filters by scan_id
+ * @apiParam {String} [proto] Filters by proto
+ * @apiParam {String} [address] Filters by address
+ * @apiParam {String} [netmask] Filters by netmask
+ * @apiParam {String} [broadcast] Filters by broadcast
+ * @apiParam {String} [iface] Filters by iface
+ * @apiParam {String} [type] Filters by type
+ * @apiParam {String} [gateway] Filters by gateway
+ * @apiParam {String} [dhcp] Filters by dhcp
+ * @apiParam {String} [scan_time] Filters by scan_time
+ * @apiParam {String} [name] Filters by name.
+ * @apiParam {String} [adapter] Filters by adapter.
+ * @apiParam {String} [state] Filters by state.
+ * @apiParam {String} [mtu] Filters by mtu.
+ * @apiParam {String} [mac] Filters by mac.
+ * @apiParam {String} [tx_packets] Filters by tx_packets.
+ * @apiParam {String} [rx_packets] Filters by rx_packets.
+ * @apiParam {String} [tx_bytes] Filters by tx_bytes.
+ * @apiParam {String} [rx_bytes] Filters by rx_bytes.
+ * @apiParam {String} [tx_errors] Filters by tx_errors.
+ * @apiParam {String} [rx_errors] Filters by rx_errors.
+ * @apiParam {String} [tx_dropped] Filters by tx_dropped.
+ * @apiParam {String} [rx_dropped] Filters by rx_dropped.
+ *
+ * @apiDescription Returns the agent's network interface info
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X GET "https://127.0.0.1:55000/syscollector/000/network?pretty&limit=2&sort=state"
+ *
+ */
+router.get('/:agent_id/network', function (req, res) {
+    logger.debug(req.connection.remoteAddress + " GET /syscollector/:agent_id/network");
+
+    var data_request = { 'function': '/syscollector/:agent_id/network', 'arguments': {} };
+    var filters = {
+        'offset': 'numbers', 'limit': 'numbers', 'sort': 'sort_param',
+        'search': 'search_param', 'select': 'select_param',
+        'id': 'numbers', 'scan_id', 'proto': 'alphanumeric_param',
+        'address': 'alphanumeric_param', 'netmask': 'alphanumeric_param',
+        'broadcast': 'alphanumeric_param', 'iface': 'alphanumeric_param',
+        'type': 'alphanumeric_param', 'gateway': 'alphanumeric_param',
+        'dhcp': 'alphanumeric_param', 'scan_time': 'alphanumeric_param',
+        'name': 'alphanumeric_param', 'adapter': 'alphanumeric_param', 'state': 'alphanumeric_param',
+        'mtu': 'numbers', 'mac': 'alphanumeric_param', 'tx_packets': 'numbers',
+        'rx_packets': 'numbers', 'tx_bytes': 'numbers', 'rx_bytes': 'numbers',
+        'tx_errors': 'numbers', 'rx_errors': 'numbers', 'tx_dropped': 'numbers',
+        'rx_dropped': 'numbers'
+    };
+
+    if (!filter.check(req.params, { 'agent_id': 'numbers' }, req, res))  // Filter with error
+        return;
+
+    if (!filter.check(req.query, filters, req, res))
+        return;
+
+    data_request['arguments']['agent_id'] = req.params.agent_id;
+    data_request['arguments']['filters'] = {};
+
+    if ('select' in req.query)
+        data_request['arguments']['select'] = filter.select_param_to_json(req.query.select)
+    if ('offset' in req.query)
+        data_request['arguments']['offset'] = Number(req.query.offset);
+    if ('limit' in req.query)
+        data_request['arguments']['limit'] = Number(req.query.limit);
+    if ('sort' in req.query)
+        data_request['arguments']['sort'] = filter.sort_param_to_json(req.query.sort);
+    if ('search' in req.query)
+        data_request['arguments']['search'] = filter.search_param_to_json(req.query.search);
+    if ('id' in req.query)
+        data_request['arguments']['filters']['id'] = req.query.id;        
+    if ('scan_id' in req.query)
+        data_request['arguments']['filters']['scan_id'] = req.query.scan_id;   
+    if ('proto' in req.query)
+        data_request['arguments']['filters']['proto'] = req.query.proto;
+    if ('address' in req.query)
+        data_request['arguments']['filters']['address'] = req.query.address;
+    if ('netmask' in req.query)
+        data_request['arguments']['filters']['netmask'] = req.query.netmask;
+    if ('broadcast' in req.query)
+        data_request['arguments']['filters']['broadcast'] = req.query.broadcast;
+    if ('iface' in req.query)
+        data_request['arguments']['filters']['iface'] = req.query.iface;    
+    if ('gateway' in req.query)
+        data_request['arguments']['filters']['gateway'] = req.query.gateway; 
+    if ('dhcp' in req.query)
+        data_request['arguments']['filters']['dhcp'] = req.query.dhcp;
+    if ('scan_time' in req.query)
+        data_request['arguments']['filters']['scan_time'] = req.query.scan_time;        
+    if ('name' in req.query)
+        data_request['arguments']['filters']['name'] = req.query.name;
+    if ('adapter' in req.query)
+        data_request['arguments']['filters']['adapter'] = req.query.adapter;
+    if ('type' in req.query)
+        data_request['arguments']['filters']['type'] = req.query.type;
+    if ('state' in req.query)
+        data_request['arguments']['filters']['state'] = req.query.state;
+    if ('mtu' in req.query)
+        data_request['arguments']['filters']['mtu'] = req.query.mtu;
+    if ('mac' in req.query)
+        data_request['arguments']['filters']['mac'] = req.query.mac;  /// this param is not present in the others calls
+    if ('tx_packets' in req.query)
+        data_request['arguments']['filters']['tx_packets'] = req.query.tx_packets;
+    if ('rx_packets' in req.query)
+        data_request['arguments']['filters']['rx_packets'] = req.query.rx_packets;
+    if ('tx_bytes' in req.query)
+        data_request['arguments']['filters']['tx_bytes'] = req.query.tx_bytes;
+    if ('rx_bytes' in req.query)
+        data_request['arguments']['filters']['rx_bytes'] = req.query.rx_bytes;
+    if ('tx_errors' in req.query)
+        data_request['arguments']['filters']['tx_errors'] = req.query.tx_errors;
+    if ('rx_errors' in req.query)
+        data_request['arguments']['filters']['rx_errors'] = req.query.rx_errors;
+    if ('tx_dropped' in req.query)
+        data_request['arguments']['filters']['tx_dropped'] = req.query.tx_dropped;
+    if ('rx_dropped' in req.query)
+        data_request['arguments']['filters']['rx_dropped'] = req.query.rx_dropped;
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
+
 module.exports = router;
