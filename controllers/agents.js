@@ -231,8 +231,8 @@ router.get('/groups/:group_id/configuration', cache(), function(req, res) {
  * @apiName GetAgentGroupFile
  * @apiGroup Groups
  *
- * @apiParam {String} group_id Group ID.
- * @apiParam {String} file_name Filename
+ * @apiParam {String} [group_id] Group ID.
+ * @apiParam {String} [file_name] Filename
  * @apiParam {String="conf","rootkit_files", "rootkit_trojans", "rcl"} [type] Type of file.
  *
  * @apiDescription Returns the specified file belonging to the group parsed to JSON.
@@ -274,6 +274,7 @@ router.get('/groups/:group_id/files/:filename', cache(), function(req, res) {
  * @apiParam {Number} [limit=500] Maximum number of elements to return.
  * @apiParam {String} [sort] Sorts the collection by a field or fields (separated by comma). Use +/- at the beginning to list in ascending or descending order.
  * @apiParam {String} [search] Looks for elements with the specified string.
+ * @apiParam {String} [hash] Hash algorithm to use to calculate files checksums.
  *
  * @apiDescription Returns the files belonging to the group.
  *
@@ -287,7 +288,7 @@ router.get('/groups/:group_id/files', cache(), function(req, res) {
     req.apicacheGroup = "agents";
 
     var data_request = {'function': '/agents/groups/:group_id/files', 'arguments': {}};
-    var filters = {'offset': 'numbers', 'limit': 'numbers', 'sort':'sort_param', 'search':'search_param'};
+    var filters = {'offset': 'numbers', 'limit': 'numbers', 'sort':'sort_param', 'search':'search_param', 'hash':'names'};
 
     if (!filter.check(req.query, filters, req, res))  // Filter with error
         return;
@@ -300,6 +301,8 @@ router.get('/groups/:group_id/files', cache(), function(req, res) {
         data_request['arguments']['sort'] = filter.sort_param_to_json(req.query.sort);
     if ('search' in req.query)
         data_request['arguments']['search'] = filter.search_param_to_json(req.query.search);
+    if ('hash' in req.query)
+        data_request['arguments']['hash_algorithm'] = req.query.hash;
 
     if (!filter.check(req.params, {'group_id':'names'}, req, res))  // Filter with error
         return;
@@ -463,6 +466,27 @@ router.get('/:agent_id/upgrade_result', function(req, res) {
 
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
+
+
+/**
+ * @api {get} /agents/:agent_id/config/:component/:configuration Get loaded configuration from agent
+ * @apiName GetConfig
+ * @apiGroup Config
+ *
+ * @apiParam {Number} agent_id Agent ID.
+ * @apiParam {String} component Selected component.
+ * @apiParam {String} configuration Configuration to read.
+ *
+ * @apiDescription Returns the loaded configuration from agent in JSON format.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X GET "https://127.0.0.1:55000/agents/001/config/logcollector/localfile?pretty"
+ *
+ */
+ router.get('/:agent_id/config/:component/:configuration', function(req, res) {     
+     param_cheks = {'agent_id': 'numbers', 'component': 'names', 'configuration': 'names'};     
+     templates.array_request('/agents/:agent_id/config/:component/:configuration', req, res, "agents", param_cheks=param_cheks, query_cheks={});
+ })
 
 
 /**
