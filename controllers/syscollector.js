@@ -605,7 +605,7 @@ router.get('/:agent_id/network', function (req, res) {
     var filters = {
         'offset': 'numbers', 'limit': 'numbers', 'sort': 'sort_param',
         'search': 'search_param', 'select': 'select_param',
-        'id': 'numbers', 'scan_id', 'proto': 'alphanumeric_param',
+        'id': 'numbers', 'scan_id': 'numbers', 'proto': 'alphanumeric_param',
         'address': 'alphanumeric_param', 'netmask': 'alphanumeric_param',
         'broadcast': 'alphanumeric_param', 'iface': 'alphanumeric_param',
         'type': 'alphanumeric_param', 'gateway': 'alphanumeric_param',
