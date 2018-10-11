@@ -72,7 +72,7 @@ $agentexistid = $agentexist.Content | ConvertFrom-Json | select -expand data | s
 
 if ($agentinfo.totalitems -lt 1){
 
-# Adding agent and getting Id from manager
+# Adding agent and getting Id and key from manager
 
 Write-Output "`r`nAdding agent:"
 $response = req -method "POST" -resource "/agents" -params @{name=$agent_name} | ConvertFrom-Json
@@ -80,19 +80,9 @@ If ($response.error -ne '0') {
   Write-Output "ERROR: $($response.message)"
   Exit
 }
-$agent_id = $response.data
+$agent_id = $response.data.id
+$agent_key = $responce.data.key
 Write-Output "Agent '$($agent_name)' with ID '$($agent_id)' added."
-
-# Getting agent key from manager
-
-Write-Output "`r`nGetting agent key:"
-$response = req -method "GET" -resource "/agents/$($agent_id)/key" | ConvertFrom-Json
-If ($response.error -ne '0') {
-  Write-Output "ERROR: $($response.message)"
-  Exit
-}
-$agent_key = $response.data
-Write-Output "Key for agent '$($agent_id)' received."
 
 # Importing key
 
@@ -139,11 +129,11 @@ Stop-Service $srvName
 $srvStat = Get-Service $srvName
 Write-Output "$($srvName) is now $($srvStat.status)"
 
-Start-Sleep -s 10
+Start-Sleep -s 5
 
 Add-Content $config "`n<ossec_config>   <client>    <server>  <address>$($wazuh_manager)</address> </server>   </client> </ossec_config>"
 
-Start-Sleep -s 10
+Start-Sleep -s 5
 
 Write-Output "Starting service."
 Start-Service $srvName
