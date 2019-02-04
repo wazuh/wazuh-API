@@ -2220,7 +2220,7 @@ describe('Syscollector', function () {
                     if (err) return done(err);
                     res.body.should.have.properties(['error', 'data']);
                     res.body.data.items[0].should.have.properties(netaddr_properties);
-                    res.body.data.items[0].proto.should.be.equal(expected_iface);
+                    res.body.data.items[0].iface.should.be.equal(expected_iface);
                     done();
                 });
         });
@@ -3683,7 +3683,7 @@ describe('Syscollector', function () {
                     if (err) return done(err);
                     res.body.should.have.properties(['error', 'data']);
                     res.body.data.items[0].should.have.properties(netaddr_properties);
-                    res.body.data.items[0].proto.should.be.equal(expected_iface);
+                    res.body.data.items[0].iface.should.be.equal(expected_iface);
                     done();
                 });
         });

@@ -1,0 +1,64 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+master_ip = "172.19.0.100"
+workers_net = "172.19.0.10" # 172.17.0.10x
+agents_net = "172.19.0.20"  # 172.17.0.20x
+n_workers = 1
+n_agents = 2
+box = "ubuntu/bionic64"
+wazuh_api_folder = ENV['WAZUH_API_PATH']
+
+Vagrant.configure("2") do |config|
+    # Manager master
+    config.vm.define "master" do |node|
+        node.vm.box = "#{box}"
+        node.vm.synced_folder "#{wazuh_api_folder}", "/home/vagrant/wazuh_api"
+        node.vm.provision :shell, path: "configure_manager.sh", args: "#{master_ip} master master /home/vagrant/wazuh_api"
+        node.vm.network :private_network, ip: "#{master_ip}"
+        node.vm.provider "virtualbox" do |pmv|
+          pmv.memory = 512
+          pmv.cpus   = 1
+      end
+      node.vm.hostname = "master"
+    end
+    # Manager worker
+    (1..n_workers).each do |i|
+        config.vm.define "worker-#{i}" do |node|
+            node.vm.box = "#{box}"
+            node.vm.synced_folder "#{wazuh_api_folder}", "/home/vagrant/wazuh_api"
+            node.vm.provision :shell, path: "configure_manager.sh", args: "#{master_ip} worker worker-#{i}"
+            node.vm.network :private_network, ip: "#{workers_net}#{i}"
+            node.vm.provider "virtualbox" do |pmv|
+              pmv.memory = 512
+              pmv.cpus   = 1
+          end
+          node.vm.hostname = "worker-#{i}"
+        end
+    end
+    # Agents
+    (1..n_agents).each do |i|
+        config.vm.define "agent-#{i}" do |node|
+            node.vm.box = "#{box}"
+            node.vm.provision :shell, path: "install_agent.sh", args: "#{master_ip} #{workers_net}1 agent-#{i} pre-release"
+            node.vm.network :private_network, ip: "#{agents_net}#{i}"
+            node.vm.provider "virtualbox" do |pmv|
+              pmv.memory = 256
+              pmv.cpus   = 1
+          end
+          node.vm.hostname = "agent-#{i}"
+        end
+    end
+
+    # Outdate agent
+    config.vm.define "agent-outdated" do |node|
+        node.vm.box = "#{box}"
+        node.vm.provision :shell, path: "install_agent.sh", args: "#{master_ip} #{workers_net}1 agent-outdated stable"
+        node.vm.network :private_network, ip: "#{agents_net}9"
+        node.vm.provider "virtualbox" do |pmv|
+            pmv.memory = 256
+            pmv.cpus   = 1
+        end
+        node.vm.hostname = "agent-outdated"
+    end
+end
+

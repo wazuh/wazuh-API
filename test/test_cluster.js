@@ -210,9 +210,23 @@ describe('Cluster', function () {
 
     describe('GET/cluster/:node_id/stats', function () {
 
+        var expected_name = "";
+        before(function (done) {
+            request(common.url)
+                .get("/cluster/nodes/")
+                .auth(common.credentials.user, common.credentials.password)
+                .expect("Content-type", /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    expected_name = res.body.data.items[0].name;
+                    done();
+                });
+        });
+
         it('Cluster stats', function (done) {
             request(common.url)
-                .get("/cluster/stats")
+                .get("/cluster/" + expected_name + "/stats")
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type", /json/)
                 .expect(200)

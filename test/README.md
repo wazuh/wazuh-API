@@ -4,18 +4,22 @@
 
  * API installed and configurated (Configure API: https and auth (foo:bar)).
  * Packages npm installed: `glob`, `supertest`, `mocha`, `should`, `moment`
- 
-    ``` 
+
+    ```
     npm install mocha -g
     npm install glob supertest mocha should moment
     ```
 
  * Cluster configurated and running with 2 connected nodes: `master` and `worker`.
- * Two connected agents:
-    * id `000` and version _Wazuh v3.7.0_. Must have the following additional configuration:
+ * Three connected agents (excluding manager):
+    * id `000` and version _Wazuh v3.8.0_. Must have the following additional configuration:
     	* Enable experimental features in `/var/ossec/api/configuration/config.js`:
 	    ```
 	    config.experimental_features = true;
+	    ```
+	    * Disable cache in the same config.js
+	    ```
+	    config.cache_enabled = "no";
 	    ```
         * Agentless:
             ```shellsession
@@ -93,8 +97,8 @@
 
 
 
-    * id `001` and version _Wazuh v3.6.1_.
-    * id `002` and version _Wazuh v3.7.0_. Must have the following additional configuration:
+    * id `001` and version _Wazuh v3.8.0_.
+    * id `002` and version _Wazuh v3.8.0_. Must have the following additional configuration:
         * Labels:
             ```xml
             <labels>
@@ -104,8 +108,9 @@
                 <label key="network.mac">02:42:ac:11:00:02</label>
                 <label key="installation" hidden="yes">January 1st, 2017</label>
             </labels>
-            ``` 
- 
+            ```
+    * id `003` and version _Wazuh v3.5.0-1_.
+
  * DB syscheck activated: Add `wazuh_database.sync_syscheck=1` to the file `/var/ossec/etc/local_internal_options.conf`.
  * Restart wazuh-manager.
  * Then start needed services:
@@ -118,5 +123,15 @@
     #  /var/ossec/bin/ossec-authd
     ```
 
+## Prepare environment
+Every step detailed above can be automated by executing the following command from `./environment/vagrant` folder:
+```shellsession
+#  export WAZUH_API_PATH=/your/wazuh/api/path
+#  vagrant up
+```
+
 ## Run all tests
-    $ mocha test/ --timeout 10000
+```shellsession
+#  cd /home/vagrant/wazuh_api
+#  mocha ./test --timeout 10000
+```

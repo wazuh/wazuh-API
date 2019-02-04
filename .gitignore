@@ -22,3 +22,7 @@ framework/lib/
 
 # Installation files
 configuration/auth/htpasswd
+
+# Vagrant folder
+test/environment/vagrant/.vagrant
+test/environment/vagrant/*.log
