@@ -10,7 +10,7 @@
  */
 
 exports.configuration_file = function() {
-    var config_fields = ['ossec_path', 'host', 'port', 'https', 'basic_auth', 'BehindProxyServer', 'logs', 'cors', 'cache_enabled', 'cache_debug', 'cache_time', 'log_path', 'ld_library_path', 'python'];
+    var config_fields = ['ossec_path', 'host', 'port', 'https', 'basic_auth', 'BehindProxyServer', 'logs', 'cors', 'cache_enabled', 'cache_debug', 'cache_time', 'log_path'];
 
     for (i = 0; i < config_fields.length; i++) {
 
@@ -30,33 +30,6 @@ exports.configuration_file = function() {
             if (!config[config_fields[i]].trim()){
                 console.log("Configuration error: Element '" + config_fields[i] + "' is empty. Exiting.");
                 return -1;
-            }
-        }
-        else{
-            // object
-            if (typeof config.python !== "object") {
-                console.log("Configuration error: Element '" + config_fields[i] + "' must be an array. Exiting.");
-                return -1;
-            }
-
-            for (var j = 0; j < config.python.length; j++) {
-
-                // Exist
-                if (!("bin" in config.python[j]) || !("lib" in config.python[j])){
-                    console.log("Configuration error: Element 'bin' or 'lib' not found. Exiting.");
-                    return -1;
-                }
-
-                // String
-                if (typeof config.python[j]["bin"] !== "string" || typeof config.python[j]["lib"] !== "string") {
-                    console.log("Configuration error: Elements 'bin' and 'lib' must be an string. Exiting.");
-                    return -1;
-                }
-                // Empty
-                if (config.python[j]["bin"] != "python" && config.python[j]["bin"] != "python3" && (!config.python[j]["bin"].trim() || !config.python[j]["lib"].trim())){
-                    console.log("Configuration error: Element 'bin' or 'lib' empty. Exiting.");
-                    return -1;
-                }
             }
         }
     }
@@ -110,34 +83,4 @@ exports.wazuh = function(my_logger) {
     }
 
     return 0;
-}
-
-exports.python = function(my_logger) {
-    const execFileSync = require('child_process').execFileSync;
-
-    var old_library_path = typeof process.env.LD_LIBRARY_PATH == 'undefined' ? '' : process.env.LD_LIBRARY_PATH;
-
-    for (var i = 0; i < config.python.length; i++) {
-        try {
-            if (config.python[i].lib.length > 0)
-                process.env.LD_LIBRARY_PATH = old_library_path + ":" + config.python[i].lib;
-
-            var buffer = execFileSync(config.python[i].bin, ["-c", "import sys; print('.'.join([str(x) for x in sys.version_info[0:2]]))"]);
-            var version = parseFloat(buffer.toString());
-
-            if (version >= 2.7) {
-                python_bin = config.python[i].bin;
-                my_logger.debug("Selected Python binary at '" + python_bin + "'.");
-                return 0;
-            }
-        } catch (e) {
-        }
-
-        process.env.LD_LIBRARY_PATH = old_library_path;
-    }
-
-    var f_msg = "ERROR: No suitable Python version found. This application requires Python 2.7 or newer. Exiting.";
-    console.log(f_msg);
-    my_logger.log(f_msg);
-    return -1;
 }

@@ -109,7 +109,7 @@ try {
 }
 
 api_path = __dirname;
-python_bin = '';
+python_bin = config.ossec_path + '/python/bin/python3';
 
 /********************************************/
 /* Config APP
@@ -121,7 +121,7 @@ var current_mm_version = version_mmp[0] + '.' + version_mmp[1]; // major.minor
 if (process.argv.length == 3 && process.argv[2] == "-f")
     logger.set_foreground();
 
-if (check.wazuh(logger) < 0 || check.python(logger) < 0) {
+if (check.wazuh(logger) < 0) {
     setTimeout(function(){ process.exit(1); }, 500);
     return;
 }
@@ -156,8 +156,11 @@ if (config.basic_auth.toLowerCase() == "yes"){
 }
 
 // temporary
-if (config.ld_library_path.indexOf('api') != -1) {
-    logger.warning("Using a deprecated API configuration. The value config.ld_library_path must be config.ossec_path + \"/framework/lib\" instead of config.ossec_path + \"/api/framework/lib\"");
+if (config.ld_library_path) {
+    logger.warning("LD library path configuration is deprecated.");
+}
+if (config.python) {
+    logger.warning("Python configuration is deprecated. Using " + python_bin);
 }
 
 

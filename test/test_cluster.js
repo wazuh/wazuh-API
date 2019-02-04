@@ -68,11 +68,8 @@ describe('Cluster', function () {
             .end(function(err,res){
                 if (err) return done(err);
 
-                res.body.should.have.properties(['error', 'data']);
-                res.body.data.should.have.properties(['items', 'totalItems']);
-
-                res.body.error.should.equal(0);
-                res.body.data.items.should.be.instanceof(Array).and.have.lengthOf(res.body.data.totalItems);
+                res.body.should.have.properties(['error', 'message']);
+                res.body.error.should.equal(1406);
                 done();
             });
         });
@@ -240,7 +237,7 @@ describe('Cluster', function () {
 
                     res.body.should.have.properties(['error', 'message']);
 
-                    res.body.error.should.equal(3018);
+                    res.body.error.should.equal(3022);
                     res.body.message.should.be.instanceof(String)
                     done();
                 });
