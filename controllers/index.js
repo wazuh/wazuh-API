@@ -77,6 +77,7 @@ router.use('/agents', require('./agents'));
 router.use('/manager', require('./manager'));
 router.use('/syscheck', require('./syscheck'));
 router.use('/rootcheck', require('./rootcheck'));
+router.use('/policy_monitoring', require('./policy_monitoring'));
 router.use('/rules', require('./rules'));
 router.use('/decoders', require('./decoders'));
 router.use('/cache', require('./cache'));
