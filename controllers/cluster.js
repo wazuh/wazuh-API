@@ -507,7 +507,7 @@ router.get('/stats/remoted', cache(), function(req, res) {
 })
 
 /**
- * @api {put} /clulster/restart Restart all nodes in cluster
+ * @api {put} /cluster/restart Restart all nodes in cluster
  * @apiName PutRestartCluster
  * @apiGroup Restart
  *
@@ -526,7 +526,7 @@ router.put('/restart', cache(), function(req, res) {
 })
 
 /**
- * @api {put} /clulster/:node_id/restart Restart a specific node in cluster
+ * @api {put} /cluster/:node_id/restart Restart a specific node in cluster
  * @apiName PutRestartClusterNode
  * @apiGroup Restart
  *
