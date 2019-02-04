@@ -485,5 +485,69 @@ router.get('/:node_id/logs/summary', cache(), function(req, res) {
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
 
+/**
+ * @api {get} /manager/stats/remoted Get remoted stats
+ * @apiName GetRemotedStats
+ * @apiGroup Stats
+ *
+ *
+ * @apiDescription Returns a summary of the current remoted stats.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X GET "https://127.0.0.1:55000/manager/stats/remoted?pretty"
+ *
+ */
+router.get('/stats/remoted', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " GET /manager/stats/remoted");
+
+    req.apicacheGroup = "manager";
+
+    var data_request = {'function': '/manager/stats/remoted', 'arguments': {}};
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
+/**
+ * @api {put} /clulster/restart Restart all nodes in cluster
+ * @apiName PutRestartCluster
+ * @apiGroup Restart
+ *
+ * @apiDescription Restarts all nodes in cluster.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X PUT "https://127.0.0.1:55000/cluster/restart?pretty"
+ *
+ */
+router.put('/restart', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " PUT /cluster/restart");
+
+    var data_request = {'function': 'PUT/cluster/restart', 'arguments': {}};
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
+/**
+ * @api {put} /clulster/:node_id/restart Restart a specific node in cluster
+ * @apiName PutRestartClusterNode
+ * @apiGroup Restart
+ *
+ * @apiDescription Restarts a specific node in cluster.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X PUT "https://127.0.0.1:55000/cluster/node02/restart?pretty"
+ *
+ */
+router.put('/:node_id/restart', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " PUT /cluster/:node_id/restart");
+
+    var data_request = {'function': 'PUT/cluster/:node_id/restart', 'arguments': {}};
+
+    if (!filter.check(req.params, {'node_id':'names'}, req, res))  // Filter with error
+        return;
+
+    data_request['arguments']['node_id'] = req.params.node_id;
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
 
 module.exports = router;
