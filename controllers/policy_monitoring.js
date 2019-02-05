@@ -67,12 +67,13 @@ router.get('/:agent_id', cache(), function(req, res) {
  *     curl -u foo:bar -k -X GET "https://127.0.0.1:55000/policy_monitoring/000/CIS%20Checks%20for%20Apache%20Https%20Server?name=&pretty"
  *
  */
-router.get('/:agent_id/checks', cache(), function(req, res) {
-    query_checks = {'name':'alphanumeric_param', 'cis': 'alphanumeric_param', 'title': 'alphanumeric_param', 'description': 'alphanumeric_param',
+router.get('/:agent_id/checks/:name', cache(), function(req, res) {
+    query_checks = {'cis': 'alphanumeric_param', 'title': 'alphanumeric_param', 'description': 'alphanumeric_param',
         'rationale': 'alphanumeric_param', 'remediation': 'alphanumeric_param', 'file': 'paths', 'process': 'alphanumeric_param', 'directory': 'paths',
         'registry': 'alphanumeric_param', 'reference': 'alphanumeric_param', 'result': 'alphanumeric_param'
     };
-    templates.array_request("/policy_monitoring/:agent_id/checks", req, res, "policymonitoring", {}, query_checks);
+    templates.array_request("/policy_monitoring/:agent_id/checks/:name", req, res, "policymonitoring",
+        {'agent_id':'numbers', 'name':'alphanumeric_param'}, query_checks);
 })
 
 module.exports = router;
