@@ -1,0 +1,54 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+master_ip = "172.17.0.100"
+workers_net = "172.17.0.10" # 172.17.0.10x
+agents_net = "172.17.0.20"  # 172.17.0.20x
+
+n_workers = 1
+n_agents = 1
+
+Vagrant.configure("2") do |config|
+
+    # Manager master
+    config.vm.define "master" do |node|
+        node.vm.box = "ubuntu/bionic64"
+        node.vm.synced_folder "C:\\Users\\Marta\\Documents\\GitHub", "/home/vagrant/GitHub"
+        node.vm.provision :shell, path: "configure_manager.sh", args: "#{master_ip} master node01"
+        node.vm.network :private_network, ip: "#{master_ip}"
+        node.vm.provider "virtualbox" do |pmv|
+          pmv.memory = 512
+          pmv.cpus   = 2
+      end
+      node.vm.hostname = "master"
+    end
+
+    # Manager worker
+    (1..n_workers).each do |i|
+        config.vm.define "worker-#{i}" do |node|
+            node.vm.box = "ubuntu/bionic64"
+            node.vm.provision :shell, path: "configure_manager.sh", args: "#{master_ip} worker node0#{i+1}"
+            node.vm.network :private_network, ip: "#{workers_net}#{i}"
+            node.vm.provider "virtualbox" do |pmv|
+              pmv.memory = 512
+              pmv.cpus   = 2
+          end
+          node.vm.hostname = "worker-#{i}"
+        end
+    end
+
+    # Agents
+    (1..n_agents).each do |i|
+        config.vm.define "agent-#{i}" do |node|
+            node.vm.box = "ubuntu/bionic64"
+            node.vm.provision :shell, path: "configure_agent.sh", args: "#{master_ip} agent-#{i} #{workers_net}1"
+            node.vm.network :private_network, ip: "#{agents_net}#{i}"
+            node.vm.provider "virtualbox" do |pmv|
+              pmv.memory = 256
+              pmv.cpus   = 1
+          end
+          node.vm.hostname = "agent-#{i}"
+        end
+    end
+
+end

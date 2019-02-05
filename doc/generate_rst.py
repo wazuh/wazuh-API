@@ -104,7 +104,13 @@ hardcoded_items = {
         'GetCiscat': {"error":0,"data":{"totalItems":2,"items":[{"profile":"xccdf_org.cisecurity.benchmarks_profile_Level_1_-_Workstation","scan":{"id":1260865673,"time":"2018-09-06T07:59:25.682-07:00"},"notchecked":71,"pass":96,"benchmark":"CIS Ubuntu Linux 16.04 LTS Benchmark","unknown":0,"score":64,"agent_id":"001","error":0,"fail":53},{"profile":"xccdf_org.cisecurity.benchmarks_profile_Level_2_-_Server","scan":{"id":1260865673,"time":"2018-09-06T07:58:39.342-07:00"},"notchecked":36,"pass":104,"benchmark":"CIS Ubuntu Linux 16.04 LTS Benchmark","unknown":1,"score":57,"agent_id":"001","error":0,"fail":79}]}},
 
         # PUT /active-response/:agent_id
-        'PutARAgentIdCommand': {"error":0,"data":"Command sent."}
+        'PutARAgentIdCommand': {"error":0,"data":"Command sent."},
+
+        # POST /agents/group/:group_id/files/:file_name
+        'PostAgentGroupFile': {"error":0,"data":"Agent configuration was updated successfully"},
+
+        # POST /agents/group/:group_id/configuration
+        'PostAgentGroupConfiguration': {"error":0,"data":"Agent configuration was updated successfully"}
     }
 ### ### ###
 

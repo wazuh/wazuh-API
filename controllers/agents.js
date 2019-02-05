@@ -238,8 +238,8 @@ router.get('/groups/:group_id/configuration', cache(), function(req, res) {
  *
  * @apiDescription Upload the group configuration (agent.conf).
  *
- * @apiExample {curl} Example usage:
- *     curl -u foo:bar -X POST -H 'Content-type: application/xml' -d @agent.conf.xml "https://127.0.0.1:55000/agents/groups/dmz/configuration?pretty"
+ * @apiExample {curl} Example usage*:
+ *     curl -u foo:bar -X POST -H 'Content-type: application/xml' -d @agent.conf.xml "https://127.0.0.1:55000/agents/groups/dmz/configuration?pretty" -k
  *
  */
 router.post('/groups/:group_id/configuration', cache(), function(req, res) {
@@ -277,8 +277,8 @@ router.post('/groups/:group_id/configuration', cache(), function(req, res) {
  *
  * @apiDescription Upload a file to a group.
  *
- * @apiExample {curl} Example usage:
- *     curl -u foo:bar -X POST -H 'Content-type: application/xml' -d @agent.conf.xml "https://127.0.0.1:55000/agents/groups/dmz/files/agent.conf?pretty"
+ * @apiExample {curl} Example usage*:
+ *     curl -u foo:bar -X POST -H 'Content-type: application/xml' -d @agent.conf.xml "https://127.0.0.1:55000/agents/groups/dmz/files/agent.conf?pretty" -k
  *
  */
 router.post('/groups/:group_id/files/:file_name', cache(), function(req, res) {
@@ -852,7 +852,7 @@ router.put('/:agent_id/group/:group_id', function(req, res) {
  * @apiDescription Adds a list of agents to the specified group.
  *
  * @apiExample {curl} Example usage:
- *     curl -u foo:bar -X POST -H "Content-Type:application/json" -d '{"ids":["001","002"]}' "http://localhost:55000/agents/group/dmz?pretty"
+ *     curl -u foo:bar -X POST -H "Content-Type:application/json" -d '{"ids":["001","002"]}' "https://localhost:55000/agents/group/dmz?pretty" -k
  *
  */
 router.post('/group/:group_id', function(req, res) {
@@ -997,7 +997,7 @@ router.delete('/:agent_id/group/:group_id', function(req, res) {
  * @apiDescription Remove a list of agents of a group
  *
  * @apiExample {curl} Example usage:
- *     curl -u foo:bar -X DELETE -H "Content-Type:application/json" -d '{"ids":["001","002"]}' "http://localhost:55000/agents/group/dmz?pretty"
+ *     curl -u foo:bar -X DELETE -H "Content-Type:application/json" -d '{"ids":["001","002"]}' "https://localhost:55000/agents/group/dmz?pretty" -k
  *
  */
 router.delete('/group/:group_id', function(req, res) {
