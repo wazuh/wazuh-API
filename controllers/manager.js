@@ -309,7 +309,6 @@ router.get('/files', cache(), function(req, res) {
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
 
-
 /**
  * @api {post} /manager/files Update local file
  * @apiName PostUpdateFile
@@ -383,8 +382,26 @@ router.get('/configuration/validation', cache(), function(req, res) {
     logger.debug(req.connection.remoteAddress + " GET /manager/configuration/validation");
 
     var data_request = {'function': '/manager/configuration/validation', 'arguments': {}};
-
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
+
+/**
+ * @api {put} /manager/restart Restart Wazuh manager
+ * @apiName PutRestartManager
+ * @apiGroup Restart
+ *
+ * @apiDescription Restarts Wazuh Manager.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X PUT "https://127.0.0.1:55000/manager/restart?pretty"
+ *
+ */
+router.put('/restart', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " PUT /manager/restart");
+
+    var data_request = {'function': 'PUT/manager/restart', 'arguments': {}};
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
 
 module.exports = router;
