@@ -44,7 +44,7 @@ exports.ips = function(ip) {
 }
 
 exports.alphanumeric_param = function(param) {
-    return input_val(param, /^[a-zA-Z0-9_,\-\.\+\s]+$/);
+    return input_val(param, /^[a-zA-Z0-9_,\-\.\+\s\:]+$/);
 }
 
 exports.sort_param = function(param) {
