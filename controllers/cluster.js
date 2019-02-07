@@ -485,5 +485,148 @@ router.get('/:node_id/logs/summary', cache(), function(req, res) {
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
 
+/**
+ * @api {get} /cluster/:node_id/files Get local file
+ * @apiName GetFileCluster
+ * @apiGroup Files
+ *
+ * @apiParam {String} path Relative path of file.
+ *
+ * @apiDescription Returns the content of a local file (rules, decoders and lists).
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X GET "https://127.0.0.1:55000/cluster/node02/files?path=/etc/rules/local_rules.xml&pretty"
+ *
+ */
+router.get('/:node_id/files', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " GET /cluster/:node_id/files");
+
+    var data_request = {'function': '/cluster/:node_id/files', 'arguments': {}};
+    var filters_param = {'node_id': 'names'};
+    var filters_query = {'path': 'paths', 'offset': 'numbers', 'limit': 'numbers',};
+
+    if (!filter.check(req.params, filters_param, req, res))  // Filter with error (param)
+        return;
+    
+    if (!filter.check(req.query, filters_query, req, res))  // Filter with error (query)
+        return;
+
+    // check path parameter
+    if (!filter.check_path(req.query.path, req, res)) return;
+
+    data_request['arguments']['node_id'] = req.params.node_id;
+    data_request['arguments']['path'] = req.query.path;
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
+
+/**
+ * @api {post} /cluster/:node_id/files Update local file
+ * @apiName PostUpdateFileCluster
+ * @apiGroup Files
+ *
+ * @apiParam {String} file Input file.
+ * @apiParam {String} path Relative path were input file will be placed.
+ *
+ * @apiDescription Upload a local file (rules, decoders and lists) in a cluster node
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -X POST -H 'Content-type: application/xml' -d @rules.xml "https://127.0.0.1:55000/cluster/node02/files?path=/etc/rules&pretty"
+ *
+ */
+router.post('/:node_id/files', function(req, res) {
+    logger.debug(req.connection.remoteAddress + " POST /cluster/:node_id/files");
+
+    var data_request = {'function': 'POST/cluster/:node_id/files', 'arguments': {}};
+    var filters_param = {'node_id': 'names'};
+    var filters_query = {'path': 'paths'};
+
+    if (!filter.check(req.params, filters_param, req, res))  // Filter with error (params)
+        return;
+    
+    if (!filter.check(req.query, filters_query, req, res))  // Filter with error (query)
+        return;
+
+    // check path parameter
+    if (!filter.check_path(req.query.path, req, res)) return;
+
+    if (req.headers['content-type'] == 'application/octet-stream') {
+        // check cdb list
+        if (!filter.check_cdb_list(req.body.toString('utf8'), req, res)) return;
+
+        try {
+            data_request['arguments']['tmp_file'] = require('../helpers/files').tmp_file_creator(req.body);
+        } catch(err) {
+            res_h.bad_request(req, res, 702, err);
+            return;
+        }
+
+    } else if (req.headers['content-type'] == 'application/xml') {
+
+        if (!filter.check_xml(req.body, req, res)) return;
+
+        try {
+            data_request['arguments']['tmp_file'] = require('../helpers/files').tmp_file_creator(req.body);
+        } catch(err) {
+            res_h.bad_request(req, res, 702, err);
+            return;
+        }
+
+    } else {
+        res_h.bad_request(req, res, 704, err);
+    }
+
+    data_request['arguments']['node_id'] = req.params.node_id;
+    data_request['arguments']['path'] = req.query.path;
+    data_request['arguments']['content_type'] = req.headers['content-type'];
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
+/**
+ * @api {get} /cluster/configuration/validation Check Wazuh configuration in all cluster nodes
+ * @apiName GetClusterConfiguration
+ * @apiGroup Files
+ *
+ * @apiDescription Returns if Wazuh configuration is OK.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X GET "https://127.0.0.1:55000/cluster/configuration/validation?pretty"
+ *
+ */
+router.get('/configuration/validation', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " GET /cluster/configuration/validation");
+
+    var data_request = {'function': '/cluster/configuration/validation', 'arguments': {}};
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
+/**
+ * @api {get} /cluster/:node_id/configuration/validation Check Wazuh configuration in a cluster nodes
+ * @apiName GetClusterNodeConfiguration
+ * @apiGroup Files
+ *
+ * @apiDescription Returns if Wazuh configuration is OK.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X GET "https://127.0.0.1:55000/cluster/node01/configuration/validation?pretty"
+ *
+ */
+router.get('/:node_id/configuration/validation', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " GET /cluster/configuration/validation");
+
+    var data_request = {'function': '/cluster/:node_id/configuration/validation', 'arguments': {}};
+    var filters_param = {'node_id': 'names'};
+
+    if (!filter.check(req.params, filters_param, req, res))  // Filter with error
+        return;
+
+    data_request['arguments']['node_id'] = req.params.node_id;
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
 
 module.exports = router;

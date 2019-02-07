@@ -34,26 +34,6 @@ config.cache_debug = "no";
 config.cache_time = "750";
 // Log path
 config.log_path = config.ossec_path + "/logs/api.log";
-// Python
-config.python = [
-    // Default installation
-    {
-        bin: "python",
-        lib: ""
-    },
-    // Python 3
-    {
-        bin: "python3",
-        lib: ""
-    },
-    // Package 'python27' for CentOS 6
-    {
-        bin: "/opt/rh/python27/root/usr/bin/python",
-        lib: "/opt/rh/python27/root/usr/lib64"
-    }
-];
-// Shared library path
-config.ld_library_path = config.ossec_path + "/framework/lib"
 
 // Option to force the use of authd to remove and add agents
 config.use_only_authd = false;

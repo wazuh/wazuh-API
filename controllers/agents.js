@@ -233,7 +233,6 @@ router.get('/groups/:group_id/configuration', cache(), function(req, res) {
  * @apiName PostAgentGroupConfiguration
  * @apiGroup Groups
  *
- * @apiParam {String} xml_file Configuration file.
  * @apiParam {String} group_id Group ID.
  *
  * @apiDescription Upload the group configuration (agent.conf).
@@ -257,7 +256,7 @@ router.post('/groups/:group_id/configuration', cache(), function(req, res) {
 
     data_request['arguments']['group_id'] = req.params.group_id;
     try {
-        data_request['arguments']['xml_file'] = require('../helpers/files').tmp_file_creator(req.body);
+        data_request['arguments']['tmp_file'] = require('../helpers/files').tmp_file_creator(req.body);
     } catch(err) {
         res_h.bad_request(req, res, 702, err);
         return;
@@ -271,7 +270,6 @@ router.post('/groups/:group_id/configuration', cache(), function(req, res) {
  * @apiName PostAgentGroupFile
  * @apiGroup Groups
  *
- * @apiParam {String} xml_file File. contents
  * @apiParam {String} group_id Group ID.
  * @apiParam {String} file_name File name.
  *
@@ -296,7 +294,7 @@ router.post('/groups/:group_id/files/:file_name', cache(), function(req, res) {
 
     data_request['arguments']['group_id'] = req.params.group_id;
     try {
-        data_request['arguments']['xml_file'] = require('../helpers/files').tmp_file_creator(req.body);
+        data_request['arguments']['tmp_file'] = require('../helpers/files').tmp_file_creator(req.body);
     } catch(err) {
         res_h.bad_request(req, res, 702, err);
         return;

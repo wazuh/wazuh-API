@@ -14,13 +14,6 @@ var errors = require('../helpers/errors');
 var timeout = 240; // seconds
 var disable_timeout = false;
 
-if (config.ld_library_path.length > 0) {
-    if (typeof process.env.LD_LIBRARY_PATH == 'undefined')
-        process.env.LD_LIBRARY_PATH = config.ld_library_path;
-    else
-        process.env.LD_LIBRARY_PATH += ":" + config.ld_library_path;
-}
-
 /**
  * Exec command.
  * It returns (callback) always a JSON.

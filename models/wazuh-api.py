@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/var/ossec/python/bin/python3
 
 # Created by Wazuh, Inc. <info@wazuh.com>.
 # This program is a free software; you can redistribute it and/or modify it under the terms of GPLv2
@@ -11,6 +11,7 @@ import json
 import signal
 import logging
 import time
+import asyncio
 
 error_wazuh_package = 0
 exception_error = None
@@ -68,11 +69,7 @@ def is_json(myjson):
 
 
 def get_stdin(msg):
-    try:
-        stdin = raw_input(msg)
-    except:
-        # Python 3
-        stdin = input(msg)
+    stdin = input(msg)
     return stdin
 
 
@@ -170,7 +167,8 @@ if __name__ == "__main__":
             exit(0)
 
         request['from_cluster'] = False
-        data = dapi.distribute_function(request, pretty, debug)
+        data = asyncio.run(dapi.DistributedAPI(input_json=request, logger=logging.getLogger(), 
+                                               debug=debug, pretty=pretty).distribute_function())
         after = time.time()
         logging.debug("Total time: {}".format(after - before))
         logging.debug("Size of all received data: {}".format(len(data)))

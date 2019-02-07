@@ -16,9 +16,9 @@ var common = require('./common.js');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-var path_rule = 'etc/rules/test_rules.xml'
-var path_decoder = 'etc/decoders/test_decoder.xml'
-var path_list = 'etc/lists/test_list'
+var path_rules = 'etc/rules/test_rules.xml'
+var path_decoders = 'etc/decoders/test_decoder.xml'
+var path_lists = 'etc/lists/test_list'
 
 describe('Manager', function() {
 
@@ -624,7 +624,7 @@ describe('Manager', function() {
 
         it('Upload rules', function(done) {
             request(common.url)
-            .post("/manager/files?path=" + path_rule)
+            .post("/manager/files?path=" + path_rules)
             .set("Content-Type", "application/xml")
             .send("<!-- Local rules -->\n  <!-- Modify it at your will. -->\n  <!-- Example -->\n  <group name=\"local,\">\n    <!--   NEW RULE    -->\n    <rule id=\"100001111\" level=\"5\">\n      <if_sid>5716</if_sid>\n      <srcip>1.1.1.1</srcip>\n      <description>sshd: authentication failed from IP 1.1.1.1.</description>\n      <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>\n    </rule>\n  </group>\n")
             .auth(common.credentials.user, common.credentials.password)
@@ -643,7 +643,7 @@ describe('Manager', function() {
 
         it('Upload decoder', function(done) {
             request(common.url)
-            .post("/manager/files?path=" + path_decoder)
+            .post("/manager/files?path=" + path_decoders)
             .set("Content-Type", "application/xml")
             .send("<!-- NEW Local Decoders -->\n  <!-- Modify it at your will. -->\n  <decoder name=\"local_decoder_example\">\n    <program_name>NEW DECODER</program_name>\n  </decoder>\n")
             .auth(common.credentials.user, common.credentials.password)
@@ -662,7 +662,7 @@ describe('Manager', function() {
 
         it('Upload list', function(done) {
             request(common.url)
-            .post("/manager/files?path=" + path_list)
+            .post("/manager/files?path=" + path_lists)
             .set("Content-Type", "application/octet-stream")
             .send("test-wazuh-w:write\ntest-wazuh-r:read\ntest-wazuh-a:attribute\ntest-wazuh-x:execute\ntest-wazuh-c:command\n")
             .auth(common.credentials.user, common.credentials.password)
@@ -680,29 +680,9 @@ describe('Manager', function() {
               });
         });
 
-        it('Upload malformed list', function(done) {
-            request(common.url)
-            .post("/manager/files?path=" + path_list)
-            .set("Content-Type", "application/octet-stream")
-            .send("test&%-wazuh-w:write\ntest-wazuh-r:read\ntest-wazuh-a:attribute\ntest-wazuh-x:execute\ntest-wazuh-c:command\n")
-            .auth(common.credentials.user, common.credentials.password)
-            .expect("Content-type",/json/)
-            .expect(400)
-            .end(function(err, res) {
-                if (err) throw err;
-
-                res.body.should.have.properties(['error', 'message']);
-
-                res.body.error.should.equal(705);
-                res.body.message.should.be.an.string;
-
-                done();
-              });
-        });
-
         it('Upload malformed rule', function(done) {
             request(common.url)
-            .post("/manager/files?path=" + path_rule)
+            .post("/manager/files?path=" + path_rules)
             .set("Content-Type", "application/xml")
             .send("<!--   NEW RULE    -->\n    <rule id=\"100001111\" level=\"5\">\n      <if_sid>5716</if_sid>\n      <srcip>1.1.1.1</srcip>\n      <description>sshd: authentication failed from IP 1.1.1.1.</description>\n      <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>\n    </rule>\n  </group>\n")
             .auth(common.credentials.user, common.credentials.password)
@@ -722,7 +702,7 @@ describe('Manager', function() {
 
         it('Upload malformed decoder', function(done) {
             request(common.url)
-            .post("/manager/files?path=" + path_decoder)
+            .post("/manager/files?path=" + path_decoders)
             .set("Content-Type", "application/xml")
             .send("<!-- NEW Local Decoders -->\n  <!-- Modify it at your will. -->\n  <decoder name=\"local_decoder_example\">\n    <program_name>NEW <DECODER</program_name>\n  </decoder>\n")
             .auth(common.credentials.user, common.credentials.password)
@@ -742,7 +722,7 @@ describe('Manager', function() {
 
         it('Upload malformed list', function(done) {
             request(common.url)
-            .post("/manager/files?path=" + path_list)
+            .post("/manager/files?path=" + path_lists)
             .set("Content-Type", "application/octet-stream")
             .send("test&%-wazuh-w:write\ntest-wazuh-r:read\ntest-wazuh-a:attribute\ntest-wazuh-x:execute\ntest-wazuh-c:command\n")
             .auth(common.credentials.user, common.credentials.password)
@@ -768,11 +748,11 @@ describe('Manager', function() {
             var config = require('../configuration/config')
             var path = require('path')
             var fs = require('fs')
-            
+
             // delete test files
-            fs.unlinkSync(path.join(config.ossec_path, path_rule));
-            fs.unlinkSync(path.join(config.ossec_path, path_decoder));
-            fs.unlinkSync(path.join(config.ossec_path, path_list));
+            fs.unlinkSync(path.join(config.ossec_path, path_rules));
+            fs.unlinkSync(path.join(config.ossec_path, path_decoders));
+            fs.unlinkSync(path.join(config.ossec_path, path_lists));
 
             done();
         });
