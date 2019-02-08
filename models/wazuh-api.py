@@ -1,4 +1,4 @@
-#!/var/ossec/python/bin/python3
+#!/usr/bin/env python
 
 # Created by Wazuh, Inc. <info@wazuh.com>.
 # This program is a free software; you can redistribute it and/or modify it under the terms of GPLv2
@@ -167,7 +167,7 @@ if __name__ == "__main__":
             exit(0)
 
         request['from_cluster'] = False
-        data = asyncio.run(dapi.DistributedAPI(input_json=request, logger=logging.getLogger(), 
+        data = asyncio.run(dapi.DistributedAPI(input_json=request, logger=logging.getLogger(),
                                                debug=debug, pretty=pretty).distribute_function())
         after = time.time()
         logging.debug("Total time: {}".format(after - before))

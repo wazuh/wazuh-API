@@ -100,18 +100,6 @@ check_program_installed() {
     fi
 }
 
-min_version() {
-    # $1: Minimal supported version
-    # $2: Current version (to test)
-
-    if [ -z "$1" ] || [ -z "$2" ]
-    then
-        return 2
-    fi
-
-    [ "$((echo $1; echo $2) | sort -V | head -n 1)" == "$1" ]
-}
-
 # END Aux functions
 
 show_info () {
@@ -246,15 +234,6 @@ previous_checks() {
 
     check_program_installed "npm"
 
-    # Check Python 2.7
-
-    check_program_installed "python"
-    python_version=$(python -V 2>&1 | cut -d' ' -f2)
-
-    if ! min_version "2.7" $python_version
-    then
-        echo "Warning: Python $python_version detected, minimal supported version is 2.7"
-    fi
 }
 
 get_api () {
@@ -429,7 +408,7 @@ setup_api() {
     fi
     exec_cmd "chown -R root:ossec $API_PATH/node_modules"
     exec_cmd "chmod -R 750 $API_PATH/node_modules"
-    
+
     exec_cmd "ln -fs $API_PATH/node_modules/htpasswd/bin/htpasswd $API_PATH/configuration/auth/htpasswd"
 
     # Set OSSEC directory in API configuration

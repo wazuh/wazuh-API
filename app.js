@@ -109,7 +109,7 @@ try {
 }
 
 api_path = __dirname;
-python_bin = config.ossec_path + '/python/bin/python3';
+python_bin = config.ossec_path + '/framework/python/bin/python3';
 
 /********************************************/
 /* Config APP
