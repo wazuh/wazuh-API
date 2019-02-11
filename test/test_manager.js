@@ -206,7 +206,7 @@ describe('Manager', function() {
             });
         });
 
-    });  // PUT/manager/configuration
+    });  // GET/manager/configuration
 
     describe('GET/manager/stats', function() {
 
@@ -618,7 +618,29 @@ describe('Manager', function() {
             });
         });
 
-    });  // PUT/manager/logs/summary
+    });  // GET/manager/logs/summary
+
+    describe('PUT/manager/restart', function() {
+
+        it('Request', function(done) {
+            request(common.url)
+            .put("/manager/restart")
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+
+                done();
+            });
+        });
+
+    });  // PUT/manager/restart
 
     describe('POST/manager/files', function() {
 

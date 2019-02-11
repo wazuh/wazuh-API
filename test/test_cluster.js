@@ -365,7 +365,7 @@ describe('Cluster', function () {
                 });
         });
 
-    });  // GET/cluster/nodes/:node_name
+    }); // GET/cluster/nodes/:node_name
 
 
     describe('GET/cluster/status', function () {
@@ -392,7 +392,7 @@ describe('Cluster', function () {
                 });
         });
 
-    });  // GET/cluster/status
+    }); // GET/cluster/status
 
 
     describe('GET/cluster/config', function () {
@@ -414,7 +414,7 @@ describe('Cluster', function () {
                 });
         });
 
-    });  // GET/cluster/config
+    }); // GET/cluster/config
 
 
     describe('GET/cluster/healthcheck', function () {
@@ -748,6 +748,7 @@ describe('Cluster', function () {
         it('Request rules', function(done) {
             request(common.url)
             .get("/cluster/node01/files?path=etc/rules/test_rules.xml")
+
             .auth(common.credentials.user, common.credentials.password)
             .expect("Content-type",/json/)
             .expect(200)
@@ -762,7 +763,7 @@ describe('Cluster', function () {
                 done();
             });
         });
-
+        
         it('Request decoders', function(done) {
             request(common.url)
             .get("/cluster/node01/files?path=etc/decoders/test_decoder.xml")
