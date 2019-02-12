@@ -763,7 +763,7 @@ describe('Cluster', function () {
                 done();
             });
         });
-        
+
         it('Request decoders', function(done) {
             request(common.url)
             .get("/cluster/node01/files?path=etc/decoders/test_decoder.xml")
