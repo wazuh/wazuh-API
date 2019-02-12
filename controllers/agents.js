@@ -557,7 +557,7 @@ router.get('/:agent_id/upgrade_result', function(req, res) {
  *
  * @apiParam {Number} agent_id Agent ID.
  * @apiParam {String="agent","agentless","analysis","auth","com","csyslog","integrator","logcollector","mail","monitor","request","syscheck","wmodules"} component Selected component.
- * @apiParam {String="client","buffer","labels","internal","agentless","global","active_response","alerts","command","rules","decoders","internal","auth","active-response","internal","cluster","csyslog","integration","localfile","socket","remote","syscheck","rootcheck","wmodules"} configuration Configuration to read.
+ * @apiParam {String="client","buffer","labels","internal","agentless","global","active_response","alerts","command","rules","decoders","internal","auth","active-response","internal","cluster","csyslog","integration","localfile","socket","remote","syscheck","rootcheck","wmodules","configuration_assessment"} configuration Configuration to read.
  *
  * @apiDescription Returns the active configuration in JSON format.
  *
