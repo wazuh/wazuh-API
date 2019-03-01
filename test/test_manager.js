@@ -622,7 +622,6 @@ describe('Manager', function() {
 
     });  // GET/manager/logs/summary
 
-
     describe('POST/manager/files', function() {
 
         // save ossec.conf
@@ -846,19 +845,6 @@ describe('Manager', function() {
 
     describe('GET/manager/files', function() {
 
-        after(function(done) {
-            var config = require('../configuration/config')
-            var path = require('path')
-            var fs = require('fs')
-
-            // delete test files
-            fs.unlinkSync(path.join(config.ossec_path, path_rules));
-            fs.unlinkSync(path.join(config.ossec_path, path_decoders));
-            fs.unlinkSync(path.join(config.ossec_path, path_lists));
-
-            done();
-        });
-
         it('Request ossec.conf', function (done) {
             request(common.url)
                 .get("/manager/files?path=" + path_ossec_conf)
@@ -1002,7 +988,6 @@ describe('Manager', function() {
 
     });  // GET/manager/files
 
-
     describe('GET/manager/configuration/validation (OK)', function() {
 
         it('Request validation ', function (done) {
@@ -1025,10 +1010,9 @@ describe('Manager', function() {
 
     });  // GET/manager/configuration/validation (OK)
 
-
     describe('GET/manager/configuration/validation (KO)', function() {
 
-        // upload corrupted ossec.conf in master (semantic)
+        // upload corrupted ossec.conf
         before(function (done) {
             request(common.url)
             .post("/manager/files?path=" + path_ossec_conf)
@@ -1049,7 +1033,7 @@ describe('Manager', function() {
             });
         });
 
-        // restore ossec.conf (master)
+        // restore ossec.conf
         after(function(done) {
             request(common.url)
             .post("/manager/files?path=" + path_ossec_conf)
@@ -1069,9 +1053,9 @@ describe('Manager', function() {
               });
         });
 
-        it('Request validation (master)', function (done) {
+        it('Request validation', function (done) {
             request(common.url)
-                .get("/cluster/master/configuration/validation")
+                .get("/manager/configuration/validation")
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type", /json/)
                 .expect(200)
@@ -1091,6 +1075,60 @@ describe('Manager', function() {
 
     });  // GET/manager/configuration/validation (KO)
 
+    describe('DELETE/manager/files', function() {
+
+        it('Delete rules', function(done) {
+            request(common.url)
+            .delete("/manager/files?path=" + path_rules)
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+                done();
+            });
+        });
+
+        it('Delete decoders', function(done) {
+            request(common.url)
+            .delete("/manager/files?path=" + path_decoders)
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+                done();
+            });
+        });
+
+        it('Delete CDB list', function(done) {
+            request(common.url)
+            .delete("/manager/files?path=" + path_lists)
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+                done();
+            });
+        });
+
+    });  // DELETE/manager/files
 
     describe('PUT/manager/restart', function() {
 

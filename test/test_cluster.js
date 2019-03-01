@@ -857,20 +857,6 @@ describe('Cluster', function () {
 
     describe('GET/cluster/:node_id/files', function() {
 
-
-        after(function (done) {
-            var config = require('../configuration/config')
-            var path = require('path')
-            var fs = require('fs')
-
-            // delete test files
-            fs.unlinkSync(path.join(config.ossec_path, path_rules));
-            fs.unlinkSync(path.join(config.ossec_path, path_decoders));
-            fs.unlinkSync(path.join(config.ossec_path, path_lists));
-
-            done();
-        });
-
         it('Request ossec.conf (master)', function (done) {
             request(common.url)
                 .get("/cluster/master/files?path=" + path_ossec_conf)
@@ -1470,6 +1456,99 @@ describe('Cluster', function () {
         });
 
     });  // GET/cluster/:node_id/configuration/validation (manager and worker KO)
+
+    describe('DELETE/cluster/:node_id/files', function() {
+
+        // upload a file in worker
+        before(function (done) {
+            request(common.url)
+            .post("/cluster/worker-1/files?path=" + path_rules)
+            .set("Content-Type", "application/xml")
+            .send("<!-- Local rules -->\n  <!-- Modify it at your will. -->\n  <!-- Example -->\n  <group name=\"local,\">\n    <!--   NEW RULE    -->\n    <rule id=\"100001111\" level=\"5\">\n      <if_sid>5716</if_sid>\n      <srcip>1.1.1.1</srcip>\n      <description>sshd: authentication failed from IP 1.1.1.1.</description>\n      <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>\n    </rule>\n  </group>\n")
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err, res) {
+                if (err) throw err;
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+
+                done();
+            });
+        });
+
+        it('Delete rules (master)', function(done) {
+            request(common.url)
+            .delete("/cluster/master/files?path=" + path_rules)
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+                done();
+            });
+        });
+
+        it('Delete decoders (master)', function(done) {
+            request(common.url)
+            .delete("/cluster/master/files?path=" + path_decoders)
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+                done();
+            });
+        });
+
+        it('Delete CDB list (master)', function(done) {
+            request(common.url)
+            .delete("/cluster/master/files?path=" + path_lists)
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+                done();
+            });
+        });
+
+        it('Delete rules (worker)', function(done) {
+            request(common.url)
+            .delete("/cluster/worker-1/files?path=" + path_rules)
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.should.be.an.string;
+                done();
+            });
+        });
+
+    });  // DELETE/manager/files
 
     describe('PUT/cluster/:node_id/restart', function() {
 

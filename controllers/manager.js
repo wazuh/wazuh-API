@@ -310,6 +310,36 @@ router.get('/files', cache(), function(req, res) {
 })
 
 /**
+ * @api {delete} /manager/files Delete a local file
+ * @apiName DeleteManagerFiles
+ * @apiGroup Files
+ *
+ * @apiParam {String} path Relative path of file.
+ * 
+ * @apiDescription Confirmation message.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X DELETE "https://127.0.0.1:55000/manager/files?path=etc/rules/local_rules.xml&pretty"
+ *
+ */
+router.delete('/files', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " DELETE /manager/files");
+
+    var data_request = {'function': 'DELETE/manager/files', 'arguments': {}};
+    var filters = {'path': 'paths'};
+
+    if (!filter.check(req.query, filters, req, res))  // Filter with error
+        return;
+
+    // check path parameter
+    if (!filter.check_path(req.query.path, req, res)) return;
+
+    data_request['arguments']['path'] = req.query.path;
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
+/**
  * @api {post} /manager/files Update local file
  * @apiName PostUpdateFile
  * @apiGroup Files
