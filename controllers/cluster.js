@@ -587,7 +587,7 @@ router.post('/:node_id/files', function(req, res) {
         }
 
     } else {
-        res_h.bad_request(req, res, 704, err);
+        res_h.bad_request(req, res, 704);
     }
 
     data_request['arguments']['node_id'] = req.params.node_id;
