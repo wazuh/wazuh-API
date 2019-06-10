@@ -452,7 +452,7 @@ describe('Agents', function() {
 
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert', 'ip':'any', 'id':'750', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'name':'NewAgentPostInsert', 'ip':'any', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(200)
@@ -474,7 +474,7 @@ describe('Agents', function() {
             it('Errors: Name already present', function(done) {
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert', 'ip':'any', 'id':'751', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'name':'NewAgentPostInsert', 'ip':'any', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(200)
@@ -493,7 +493,7 @@ describe('Agents', function() {
             it('Errors: ID already present', function(done) {
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert', 'ip':'any', 'id':'750', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'name':'NewAgentPostInsert', 'ip':'any', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(200)
@@ -512,7 +512,7 @@ describe('Agents', function() {
             it('Errors: Invalid key', function(done) {
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert', 'ip':'any', 'id':'750', 'key':'short'})
+                .send({'name':'NewAgentPostInsert', 'ip':'any', 'key':'short'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(200)
@@ -549,7 +549,7 @@ describe('Agents', function() {
 
                 request(common.url)
                 .post("/agents/insert")
-                .send({'extraField': 'invalid', 'name':'NewAgentPostInsert', 'ip':'any', 'id':'750', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'extraField': 'invalid', 'name':'NewAgentPostInsert', 'ip':'any', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(400)
@@ -585,7 +585,7 @@ describe('Agents', function() {
 
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert', 'id':'755', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'name':'NewAgentPostInsert', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(200)
@@ -605,7 +605,7 @@ describe('Agents', function() {
             it('Errors: Duplicated IP', function(done) {
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert3', 'id':'756', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'name':'NewAgentPostInsert3', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(200)
@@ -646,7 +646,7 @@ describe('Agents', function() {
 
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert4', 'ip':'192.246.247.249', 'id':'760', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'name':'NewAgentPostInsert4', 'ip':'192.246.247.249', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(200)
@@ -667,7 +667,7 @@ describe('Agents', function() {
 
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert', 'ip':'192.246.247.d', 'id':'760', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'name':'NewAgentPostInsert', 'ip':'192.246.247.d', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(400)
@@ -685,7 +685,7 @@ describe('Agents', function() {
 
                 request(common.url)
                 .post("/agents/insert")
-                .send({'name':'NewAgentPostInsert4', 'ip':'333.333.333.333', 'id':'760', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
+                .send({'name':'NewAgentPostInsert4', 'ip':'333.333.333.333', 'key':'1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64'})
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type",/json/)
                 .expect(400)

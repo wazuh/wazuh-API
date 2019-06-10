@@ -1167,7 +1167,7 @@ router.post('/', function(req, res) {
  * @apiDescription Insert an agent with an existing id and key.
  *
  * @apiExample {curl} Example usage:
- *     curl -u foo:bar -k -X POST -d '{"name":"NewHost_2","ip":"10.0.10.10","id":"123","key":"1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64"}' -H 'Content-Type:application/json' "https://127.0.0.1:55000/agents/insert?pretty"
+ *     curl -u foo:bar -k -X POST -d '{"name":"NewHost_2","ip":"10.0.10.10","key":"1abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghi64"}' -H 'Content-Type:application/json' "https://127.0.0.1:55000/agents/insert?pretty"
  *
  */
 router.post('/insert', function(req, res) {
@@ -1198,23 +1198,30 @@ router.post('/insert', function(req, res) {
     req.body.ip = ip;
 
     var data_request = {'function': 'POST/agents/insert', 'arguments': {}};
-    var filters = {'name':'names', 'ip':'ips', 'id':'numbers', 'key': 'ossec_key', 'force':'numbers'};
+    var filters = {'name': 'names', 'ip': 'ips', 'id': 'numbers', 'key': 'ossec_key', 'force': 'numbers'};
 
     if (!filter.check(req.body, filters, req, res))  // Filter with error
         return;
 
-    data_request['arguments']['id'] = req.body.id;
     data_request['arguments']['name'] = req.body.name;
-    data_request['arguments']['ip'] = req.body.ip;
-    data_request['arguments']['key'] = req.body.key;
-    if ('force' in req.body){
+
+    if ('ip' in req.body) {
+        data_request['arguments']['ip'] = req.body.ip;
+    }
+    if ('key' in req.body) {
+        data_request['arguments']['key'] = req.body.key;
+    }
+    if ('id' in req.body) {
+        data_request['arguments']['id'] = req.body.id;
+    }
+    if ('force' in req.body) {
         data_request['arguments']['force'] = req.body.force;
     }
 
-    if ('id' in req.body && 'name' in req.body && 'ip' in req.body && 'key' in req.body){
+    if (req.body && 'name' in req.body) {
         execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
-    }else
-        res_h.bad_request(req, res, 604, "Missing fields. Mandatory fields: id, name, ip, key");
+    } else
+        res_h.bad_request(req, res, 604, "Missing field: 'name'");
 })
 
 
