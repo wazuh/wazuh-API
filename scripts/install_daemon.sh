@@ -18,6 +18,15 @@ I_FMODE="644"
 I_SYSTEMD="/etc/systemd/system"
 I_SYSVINIT="/etc/init.d"
 
+check_service() { \
+  service_var=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+  if [ -z "${service_var}" ] || [ "X${service_var}" = "Xyes" ] || [ "X${service_var}" = "Xy" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 OSSEC_CONF="/etc/ossec-init.conf"
 DEF_OSSDIR="/var/ossec"
 
@@ -70,8 +79,10 @@ if [ -n "$(ps -e | egrep ^\ *1\ .*systemd$)" ]; then
     install -m $I_FMODE -o $I_OWNER -g $I_GROUP $SCRIPTS_PATH/wazuh-api.service.tmp $I_SYSTEMD/wazuh-api.service
     rm $SCRIPTS_PATH/wazuh-api.service.tmp
     systemctl daemon-reload
-    systemctl enable wazuh-api
-    systemctl restart wazuh-api
+    if check_service ${ENABLE_WAZUH_SERVICE} ; then
+        systemctl enable wazuh-api
+        systemctl restart wazuh-api
+    fi
 
 
 # Install for SysVinit / Upstart
@@ -86,15 +97,19 @@ elif [ -n "$(ps -e | egrep ^\ *1\ .*init$)" ]; then
     rm $SCRIPTS_PATH/wazuh-api.tmp
 
     enabled=true
-    if [ -r "/etc/redhat-release" ] || [ -r "/etc/SuSE-release" ]; then
-        /sbin/chkconfig --add wazuh-api > /dev/null 2>&1
-    elif [ -f "/usr/sbin/update-rc.d" ] || [ -n "$(ps -e | egrep upstart)" ]; then
-        update-rc.d wazuh-api defaults
-    elif [ -r "/etc/gentoo-release" ]; then
-        rc-update add wazuh-api default
+    if check_service ${ENABLE_WAZUH_SERVICE} ; then
+        if [ -r "/etc/redhat-release" ] || [ -r "/etc/SuSE-release" ]; then
+            /sbin/chkconfig --add wazuh-api > /dev/null 2>&1
+        elif [ -f "/usr/sbin/update-rc.d" ] || [ -n "$(ps -e | egrep upstart)" ]; then
+            update-rc.d wazuh-api defaults
+        elif [ -r "/etc/gentoo-release" ]; then
+            rc-update add wazuh-api default
+        else
+            echo "init script installed in $I_SYSVINIT/wazuh-api"
+            echo "We could not enable it. Please enable the service manually."
+            enabled=false
+        fi
     else
-        echo "init script installed in $I_SYSVINIT/wazuh-api"
-        echo "We could not enable it. Please enable the service manually."
         enabled=false
     fi
 
