@@ -18,9 +18,35 @@ I_FMODE="644"
 I_SYSTEMD="/etc/systemd/system"
 I_SYSVINIT="/etc/init.d"
 
-check_service() { \
+check_service() {
   service_var=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-  if [ -z "${service_var}" ] || [ "X${service_var}" = "Xyes" ] || [ "X${service_var}" = "Xy" ]; then
+  if [ -z "${service_var}" ]; then
+    if command -v systemctl > /dev/null 2>&1 ; then
+      if systemctl is-enabled wazuh-api > /dev/null 2>&1 ; then
+        return 0
+      else
+        return 1
+      fi
+    elif command -v chkconfig > /dev/null 2>&1 ; then
+      if chkconfig --list wazuh-api | grep on > /dev/null 2>&1 ; then
+        return 0
+      else
+        return 1
+      fi
+    elif command -v update-rc.d > /dev/null 2>&1 ; then
+      if ls /etc/rc*.d | grep wazuh-api > /dev/null 2>&1 ; then
+        return 0
+      else
+        return 1
+      fi
+    elif command -v rc-update > /dev/null 2>&1 ; then
+      if ls /etc/rc*.d | grep wazuh-api > /dev/null 2>&1 ; then
+        return 0
+      else
+        return 1
+      fi
+    fi
+  elif [ "X${service_var}" = "Xyes" ] || [ "X${service_var}" = "Xy" ]; then
     return 0
   else
     return 1
