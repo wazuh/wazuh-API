@@ -439,7 +439,7 @@ setup_api() {
     then
         print "\nInstalling service."
         echo "----------------------------------------------------------------"
-        exec_cmd_bash "$API_PATH/scripts/install_daemon.sh"
+        exec_cmd_bash "$API_PATH/scripts/install_daemon.sh $update"
         echo "----------------------------------------------------------------"
     else
         print "\nSkipping service installation."
