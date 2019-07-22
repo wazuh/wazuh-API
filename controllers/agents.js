@@ -1239,4 +1239,35 @@ router.get('/stats/distinct', cache(), function (req, res) {
     templates.array_request('/agents/stats/distinct', req, res, "agents", {}, query_checks);
 })
 
+/**
+ * @api {put} /agents/configuration/validation Validate an agent configuration
+ * @apiName PutManagerValidationFile
+ * @apiGroup Files
+ *
+ * @apiDescription Validates an agent configuration
+ *
+ * @apiExample {curl} Example usage*:
+ *     curl -u foo:bar -k -X PUT -H 'Content-type: application/xml' -d @test_agent.conf "https://127.0.0.1:55000/agents/configuration/validation?pretty"
+ *
+ */
+router.put('/configuration/validation', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " PUT agents/configuration/validation");
+
+    var data_request = {'function': 'PUT/agents/configuration/validation', 'arguments': {}};
+
+    if (req.headers['content-type'] == 'application/octet-stream' || req.headers['content-type'] == 'application/xml') {
+        try {
+            data_request['arguments']['tmp_file'] = require('../helpers/files').tmp_file_creator(req.body);
+        } catch(err) {
+            res_h.bad_request(req, res, 702, err);
+            return;
+        }
+    } else {
+        res_h.bad_request(req, res, 804, req.headers['content-type']);
+        return;
+    }
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
+
 module.exports = router;
