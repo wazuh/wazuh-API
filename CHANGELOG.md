@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [v3.12.1]
+
+There are no changes for Wazuh API in this version.
+
+
 ## [v3.12.0]
 
 ### Added
@@ -10,6 +15,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Now endpoint `GET /sca/:agent_id/checks/:policy_id` shows `condition` fields and can be used to filter by ([#4012](https://github.com/wazuh/wazuh/issues/4012))
+
+### Fixed
+- Fixed bug with API requests not being properly distributed to the selected node_id: ([#479](https://github.com/wazuh/wazuh-api/pull/479)).
+    * `GET /cluster/{node_id}/stats/analysisd` 
+    * `GET /cluster/{node_id}/stats/remoted`
 
 
 ## [v3.11.0]

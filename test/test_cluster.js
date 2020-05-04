@@ -306,9 +306,9 @@ describe('Cluster', function () {
                 });
         });
 
-        it('Analysisd stats', function (done) {
+        it('Analysisd stats (master)', function (done) {
             request(common.url)
-                .get("/cluster/:node_id/stats/analysisd")
+                .get("/cluster/master/stats/analysisd")
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type", /json/)
                 .expect(200)
@@ -336,9 +336,69 @@ describe('Cluster', function () {
                 });
         });
 
-        it('Remoted stats', function (done) {
+        it('Analysisd stats (worker-1)', function (done) {
             request(common.url)
-                .get("/cluster/:node_id/stats/remoted")
+                .get("/cluster/worker-1/stats/analysisd")
+                .auth(common.credentials.user, common.credentials.password)
+                .expect("Content-type", /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+
+                    res.body.should.have.properties(['error', 'data']);
+
+                    res.body.error.should.equal(0);
+                    res.body.data.should.have.properties(['archives_queue_size', 'events_dropped',
+                                                          'rule_matching_queue_usage', 'alerts_queue_size',
+                                                          'event_queue_usage', 'events_edps', 'hostinfo_events_decoded',
+                                                          'syscollector_events_decoded', 'rootcheck_edps', 'events_processed',
+                                                          'firewall_queue_usage', 'alerts_queue_usage', 'firewall_queue_size',
+                                                          'alerts_written', 'firewall_written', 'syscheck_queue_size',
+                                                          'events_received', 'rootcheck_queue_usage', 'rootcheck_events_decoded',
+                                                          'rootcheck_queue_size', 'syscheck_edps', 'fts_written',
+                                                          'syscheck_queue_usage', 'other_events_edps', 'statistical_queue_usage',
+                                                          'hostinfo_edps', 'hostinfo_queue_usage', 'syscheck_events_decoded',
+                                                          'syscollector_queue_usage', 'archives_queue_usage', 'statistical_queue_size',
+                                                          'total_events_decoded', 'hostinfo_queue_size', 'syscollector_queue_size',
+                                                          'rule_matching_queue_size', 'other_events_decoded', 'event_queue_size',
+                                                          'syscollector_edps']);
+                    done();
+                });
+        });
+
+        it('Analysisd stats (worker-2)', function (done) {
+            request(common.url)
+                .get("/cluster/worker-2/stats/analysisd")
+                .auth(common.credentials.user, common.credentials.password)
+                .expect("Content-type", /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+
+                    res.body.should.have.properties(['error', 'data']);
+
+                    res.body.error.should.equal(0);
+                    res.body.data.should.have.properties(['archives_queue_size', 'events_dropped',
+                                                          'rule_matching_queue_usage', 'alerts_queue_size',
+                                                          'event_queue_usage', 'events_edps', 'hostinfo_events_decoded',
+                                                          'syscollector_events_decoded', 'rootcheck_edps', 'events_processed',
+                                                          'firewall_queue_usage', 'alerts_queue_usage', 'firewall_queue_size',
+                                                          'alerts_written', 'firewall_written', 'syscheck_queue_size',
+                                                          'events_received', 'rootcheck_queue_usage', 'rootcheck_events_decoded',
+                                                          'rootcheck_queue_size', 'syscheck_edps', 'fts_written',
+                                                          'syscheck_queue_usage', 'other_events_edps', 'statistical_queue_usage',
+                                                          'hostinfo_edps', 'hostinfo_queue_usage', 'syscheck_events_decoded',
+                                                          'syscollector_queue_usage', 'archives_queue_usage', 'statistical_queue_size',
+                                                          'total_events_decoded', 'hostinfo_queue_size', 'syscollector_queue_size',
+                                                          'rule_matching_queue_size', 'other_events_decoded', 'event_queue_size',
+                                                          'syscollector_edps']);
+                    done();
+                });
+        });
+
+        it('Remoted stats (master)', function (done) {
+            request(common.url)
+                .get("/cluster/master/stats/remoted")
                 .auth(common.credentials.user, common.credentials.password)
                 .expect("Content-type", /json/)
                 .expect(200)
@@ -356,7 +416,45 @@ describe('Cluster', function () {
                 });
         });
 
+        it('Remoted stats (worker-1)', function (done) {
+            request(common.url)
+                .get("/cluster/worker-1/stats/remoted")
+                .auth(common.credentials.user, common.credentials.password)
+                .expect("Content-type", /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
 
+                    res.body.should.have.properties(['error', 'data']);
+
+                    res.body.error.should.equal(0);
+
+                    res.body.data.should.have.properties(['discarded_count', 'msg_sent', 'queue_size',
+                                                          'ctrl_msg_count', 'evt_count', 'tcp_sessions',
+                                                          'total_queue_size']);
+                    done();
+                });
+        });
+
+        it('Remoted stats (worker-2)', function (done) {
+            request(common.url)
+                .get("/cluster/worker-2/stats/remoted")
+                .auth(common.credentials.user, common.credentials.password)
+                .expect("Content-type", /json/)
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+
+                    res.body.should.have.properties(['error', 'data']);
+
+                    res.body.error.should.equal(0);
+
+                    res.body.data.should.have.properties(['discarded_count', 'msg_sent', 'queue_size',
+                                                          'ctrl_msg_count', 'evt_count', 'tcp_sessions',
+                                                          'total_queue_size']);
+                    done();
+                });
+        });
     });  // GET/cluster/stats
 
 

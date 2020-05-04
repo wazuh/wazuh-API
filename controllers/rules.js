@@ -1,6 +1,6 @@
 /**
  * Wazuh RESTful API
- * Copyright (C) 2015-2019 Wazuh, Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Wazuh, Inc. All rights reserved.
  * Wazuh.com
  *
  * This program is a free software; you can redistribute it
@@ -32,6 +32,7 @@ var router = require('express').Router();
  * @apiParam {String} [nist-800-53] Filters the rules by nist-800-53 requirement.
  * @apiParam {String} [gpg13] Filters the rules by gpg13 requirement.
  * @apiParam {String} [mitre] Filters the rules by mitre requirement.
+ * @apiParam {String} [tsc] Filters the rules by tsc requirement.
  * @apiParam {String} [q] Query to filter results by. For example q=id=89055
  *
  * @apiDescription Returns all rules.
@@ -45,7 +46,7 @@ router.get('/', cache(), function(req, res) {
     query_checks = {'status':'alphanumeric_param', 'group':'alphanumeric_param',
         'level':'ranges', 'path':'paths', 'file':'alphanumeric_param', 'pci':'alphanumeric_param',
         'gdpr': 'alphanumeric_param', 'hipaa': 'alphanumeric_param',
-        'nist-800-53': 'alphanumeric_param', 'gpg13': 'alphanumeric_param',
+        'nist-800-53': 'alphanumeric_param', 'gpg13': 'alphanumeric_param', 'tsc': 'alphanumeric_param',
         'mitre': 'alphanumeric_param'};
 
     templates.array_request('/rules', req, res, "rules", param_checks, query_checks);
@@ -289,6 +290,44 @@ router.get('/nist-800-53', cache(), function(req, res) {
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
 
+/**
+ * @api {get} /rules/tsc Get rule TSC requirements
+ * @apiName GetRulesTSC
+ * @apiGroup Info
+ *
+ * @apiParam {Number} [offset] First element to return in the collection.
+ * @apiParam {Number} [limit=500] Maximum number of elements to return.
+ * @apiParam {String} [sort] Sorts the collection by a field or fields (separated by comma). Use +/- at the beginning to list in ascending or descending order.
+ * @apiParam {String} [search] Looks for elements with the specified string.
+ *
+ * @apiDescription Returns the TSC requirements of all rules.
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -u foo:bar -k -X GET "https://127.0.0.1:55000/rules/tsc?offset=0&limit=10&pretty"
+ *
+ */
+router.get('/tsc', cache(), function(req, res) {
+    logger.debug(req.connection.remoteAddress + " GET /rules/tsc");
+
+    req.apicacheGroup = "rules";
+
+    var data_request = {'function': '/rules/tsc', 'arguments': {}};
+    var filters = {'offset': 'numbers', 'limit': 'numbers', 'sort':'sort_param', 'search':'search_param'};
+
+    if (!filter.check(req.query, filters, req, res))  // Filter with error
+        return;
+
+    if ('offset' in req.query)
+        data_request['arguments']['offset'] = Number(req.query.offset);
+    if ('limit' in req.query)
+        data_request['arguments']['limit'] = Number(req.query.limit);
+    if ('sort' in req.query)
+        data_request['arguments']['sort'] = filter.sort_param_to_json(req.query.sort);
+    if ('search' in req.query)
+        data_request['arguments']['search'] = filter.search_param_to_json(req.query.search);
+
+    execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
+})
 
 /**
  * @api {get} /rules/mitre Get rule mitre requirements

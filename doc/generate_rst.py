@@ -390,7 +390,7 @@ if __name__ == "__main__":
                         alerts.append(msg_end + " -> " + output)
 
                     f.write(str_example_res + '\n')
-                    f.write('::\n')
+                    f.write('\n.. code-block:: json\n\t:class: output\n')
                     for line in output.split('\n'):
                         f.write('\n\t{0}'.format(line))
                     f.write('\n')

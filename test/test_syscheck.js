@@ -330,6 +330,60 @@ describe('Syscheck', function() {
             });
         });
 
+        it('Filters: "%Y-%m-%d" date', function(done) {
+            request(common.url)
+            .get("/syscheck/000?q=mtime>2018-01-01")
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.totalItems.should.be.an.integer;
+                res.body.data.items.should.be.instanceof(Array)
+                done();
+            });
+        });
+
+        it('Filters: "%Y-%m-%d %H:%M:%S" date', function(done) {
+            request(common.url)
+            .get("/syscheck/000?q=mtime>" + encodeURI("2018-01-01 00:00:00"))
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.totalItems.should.be.an.integer;
+                res.body.data.items.should.be.instanceof(Array)
+                done();
+            });
+        });
+
+        it('Filters: timestamp date', function(done) {
+            request(common.url)
+            .get("/syscheck/000?q=mtime>1514761200")
+            .auth(common.credentials.user, common.credentials.password)
+            .expect("Content-type",/json/)
+            .expect(200)
+            .end(function(err,res){
+                if (err) return done(err);
+
+                res.body.should.have.properties(['error', 'data']);
+
+                res.body.error.should.equal(0);
+                res.body.data.totalItems.should.be.an.integer;
+                res.body.data.items.should.be.instanceof(Array)
+                done();
+            });
+        });
+
     });  // GET/syscheck/:agent_id
 
     describe('GET/syscheck/:agent_id/last_scan', function() {

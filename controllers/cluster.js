@@ -1,6 +1,6 @@
 /**
  * Wazuh RESTful API
- * Copyright (C) 2015-2019 Wazuh, Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Wazuh, Inc. All rights reserved.
  * Wazuh.com
  *
  * This program is a free software; you can redistribute it
@@ -365,7 +365,12 @@ router.get('/:node_id/stats/analysisd', cache(), function(req, res) {
     req.apicacheGroup = "cluster";
 
     var data_request = {'function': '/cluster/:node_id/stats/analysisd', 'arguments': {}};
-    
+
+    if (!filter.check(req.params, {'node_id':'names'}, req, res))  // Filter with error
+        return;
+
+    data_request['arguments']['node_id'] = req.params.node_id;
+
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
 
@@ -374,7 +379,7 @@ router.get('/:node_id/stats/analysisd', cache(), function(req, res) {
  * @apiName GetManagerStatsRemotedCluster
  * @apiGroup Stats
  *
- * 
+ *
  * @apiDescription Returns a summary of the current remoted stats on the node.
  *
  * @apiExample {curl} Example usage*:
@@ -387,6 +392,12 @@ router.get('/:node_id/stats/remoted', cache(), function(req, res) {
     req.apicacheGroup = "cluster";
 
     var data_request = {'function': '/cluster/:node_id/stats/remoted', 'arguments': {}};
+
+    if (!filter.check(req.params, {'node_id':'names'}, req, res))  // Filter with error
+        return;
+
+    data_request['arguments']['node_id'] = req.params.node_id;
+
     execute.exec(python_bin, [wazuh_control], data_request, function (data) { res_h.send(req, res, data); });
 })
 

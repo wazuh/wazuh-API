@@ -1,6 +1,6 @@
 /**
  * Wazuh RESTful API
- * Copyright (C) 2015-2019 Wazuh, Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Wazuh, Inc. All rights reserved.
  * Wazuh.com
  *
  * This program is a free software; you can redistribute it
@@ -89,7 +89,7 @@ exports.boolean = function(b) {
 }
 
 exports.query_param = function(q) {
-    return input_val(q, /^(?:\(*[\w\.\-]+(?:=|!=|<|>|~)[\w\.\-\:\%\/\s]+\)*)(?:(?:;|,)\(*[\w\.\-]+(?:=|!=|<|>|~)[\w\.\-\:\%\/\s]+\)*)*$/);
+    return input_val(q, /^(?:\(*[\w\.\-]+(?:=|!=|<|>|~)[\[\]\{\}\\\w\.\-\:\%\/\s]+\)*)(?:(?:;|,)\(*[\w\.\-]+(?:=|!=|<|>|~)[\[\]\{\}\\\w\.\-\:\%\/\s]+\)*)*$/);
 }
 
 exports.format = function(q) {

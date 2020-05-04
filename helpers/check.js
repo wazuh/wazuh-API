@@ -1,6 +1,6 @@
 /**
  * Wazuh API RESTful
- * Copyright (C) 2015-2019 Wazuh, Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Wazuh, Inc. All rights reserved.
  * Wazuh.com
  *
  * This program is a free software; you can redistribute it
